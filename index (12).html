@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Happiness Report 2020-2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+ :root{--bg:#0b1020;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.1);--txt:#e8ecf8;--mut:#9aa6c7}
+ *{box-sizing:border-box} html{scroll-behavior:smooth}
+ body{margin:0;font-family:Poppins,'Segoe UI',system-ui,sans-serif;line-height:1.7;color:var(--txt);background:var(--bg);
+  background-image:radial-gradient(circle at 15% 0%,rgba(96,165,250,.15),transparent 40%),radial-gradient(circle at 90% 30%,rgba(244,114,182,.12),transparent 40%)}
+ #bar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,#2dd4bf,#60a5fa,#f472b6);z-index:50}
+ .hero{position:relative;overflow:hidden;text-align:center;padding:90px 20px 70px;
+  background:linear-gradient(120deg,#1e3a8a,#0f766e,#9d174d,#1e3a8a);background-size:300% 300%;animation:flow 14s ease infinite}
+ @keyframes flow{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+ .blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:.45;animation:float 9s ease-in-out infinite}
+ .b1{width:240px;height:240px;background:#fbbf24;top:-60px;left:8%} .b2{width:300px;height:300px;background:#f472b6;bottom:-120px;right:6%;animation-delay:-3s}
+ .b3{width:180px;height:180px;background:#2dd4bf;top:30%;right:30%;animation-delay:-6s}
+ @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+ .hero *{position:relative}
+ .emoji{font-size:3.2rem;display:inline-block;animation:bounce 2.4s ease-in-out infinite}
+ @keyframes bounce{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-12px) rotate(6deg)}}
+ .hero h1{margin:8px 0;font-size:clamp(2.2rem,6vw,4rem);font-weight:800;letter-spacing:-1px}
+ .hero h1 span{background:linear-gradient(90deg,#fde68a,#fbcfe8,#99f6e4);-webkit-background-clip:text;background-clip:text;color:transparent}
+ .hero p{margin:0 auto;max-width:560px;color:#e2e8f0;font-size:1.1rem}
+ nav{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:10px;background:rgba(11,16,32,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+ nav a{color:var(--mut);text-decoration:none;font-weight:600;font-size:.82rem;padding:6px 12px;border-radius:99px;transition:.2s}
+ nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+ main{max-width:960px;margin:0 auto;padding:10px 18px 40px}
+ .card{--c:#60a5fa;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:20px;padding:28px;margin:28px 0;
+  backdrop-filter:blur(8px);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+ .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease} .reveal.in{opacity:1;transform:none}
+ .qhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+ .num{font-size:2.6rem;font-weight:800;color:var(--c);opacity:.9;line-height:1}
+ .qhead h2{margin:0;font-size:1.5rem} .qhead .ico{font-size:1.8rem}
+ .q{margin:10px 0 4px;font-size:1.05rem;font-weight:600;color:var(--c)}
+ .chart{position:relative;height:380px;margin:18px 0;padding:12px;background:rgba(0,0,0,.25);border-radius:14px;border:1px solid var(--line)}
+ .answer{border-left:3px solid var(--c);padding:2px 0 2px 16px;margin-top:10px;color:#d6dcf0}
+ .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+ .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:22px 0}
+ .stat{background:linear-gradient(135deg,rgba(96,165,250,.18),rgba(244,114,182,.14));border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center}
+ .stat b{display:block;font-size:2rem;font-weight:800;background:linear-gradient(90deg,#99f6e4,#fbcfe8);-webkit-background-clip:text;background-clip:text;color:transparent}
+ .stat span{font-size:.8rem;color:var(--mut)}
+ .spots{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+ .spot{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center;transition:.25s}
+ .spot:hover{transform:translateY(-6px) scale(1.02);border-color:#fbbf24;box-shadow:0 12px 30px rgba(251,191,36,.18)}
+ .spot .ico{font-size:2rem} .spot small{display:block;color:var(--mut)} .spot strong{display:block;font-size:1.2rem} .spot em{font-style:normal;color:#fbbf24;font-weight:600}
+ .podium{display:flex;justify-content:center;align-items:flex-end;gap:12px;margin:20px 0 6px}
+ .pod{flex:1;max-width:190px;text-align:center;border-radius:16px 16px 0 0;padding:12px 8px;background:linear-gradient(180deg,rgba(251,191,36,.35),rgba(251,191,36,.05));border:1px solid var(--line);border-bottom:0}
+ .p1{min-height:170px} .p2{min-height:135px;background:linear-gradient(180deg,rgba(203,213,225,.3),rgba(203,213,225,.04))} .p3{min-height:110px;background:linear-gradient(180deg,rgba(251,146,60,.3),rgba(251,146,60,.04))}
+ .medal{font-size:2rem} .pname{font-weight:700} .pscore{color:var(--mut);font-size:.9rem}
+ .persist{background:rgba(255,255,255,.04);border-radius:12px;padding:6px 16px;margin:12px 0}
+ .controls{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+ select{background:#141a33;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;min-width:190px}
+ #readout{color:var(--mut);font-size:.95rem}
+ .checks{list-style:none;padding:0;margin:0} .checks li{padding:10px 14px 10px 44px;margin:10px 0;position:relative;background:rgba(255,255,255,.05);border-radius:12px}
+ .checks li::before{content:"\2714";position:absolute;left:14px;top:9px;color:#2dd4bf;font-weight:800}
+ h3{margin:22px 0 6px}
+ footer{text-align:center;color:var(--mut);font-size:.82rem;padding:34px 20px 50px}
+ @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style></head><body>
+<div id="bar"></div>
+<header class="hero"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+ <div class="emoji">&#x1F60A;</div><h1>World <span>Happiness</span> Report</h1>
+ <p>Six big questions about how the world's happiness changed between 2020 and 2025.</p></header>
+<nav><a href="#intro">Intro</a><a href="#q1">Trend</a><a href="#q2">Gap</a><a href="#q3">Top &amp; bottom</a><a href="#q4">Movers</a><a href="#q5">Catch-up</a><a href="#q6">Stability</a><a href="#explore">Explore</a><a href="#summary">Summary</a><a href="#conclusions">Conclusions</a></nav>
+<main>
+<section id="intro" class="card reveal" style="--c:#fbbf24"><div class="qhead"><span class="ico">&#x1F30D;</span><h2>Introduction</h2></div>
+ <p>This site explores national happiness scores from 2020 to 2025 across 165 countries.</p><div class="stats"><div class="stat"><b data-to="165" data-dec="0" data-pre="">165</b><span>countries</span></div><div class="stat"><b data-to="6" data-dec="0" data-pre="">6</b><span>years of data</span></div><div class="stat"><b data-to="5.65" data-dec="2" data-pre="">5.65</b><span>global average in 2025</span></div><div class="stat"><b data-to="0.11" data-dec="2" data-pre="+">0.11</b><span>change since 2020</span></div></div><div class="spots"><div class="spot"><div class="ico">&#x1F451;</div><small>Happiest in 2025</small><strong>Finland</strong><em>7.76 / 10</em></div><div class="spot"><div class="ico">&#x1F680;</div><small>Biggest climber</small><strong>Vietnam</strong><em>+1.02</em></div><div class="spot"><div class="ico">&#x1F4C9;</div><small>Biggest drop</small><strong>Afghanistan</strong><em>-1.08</em></div></div><h3>Data and method</h3><p>Each row is a country-year happiness score. Statistics are computed from a Google Sheet.</p></section>
+
+<section id="q1" class="card reveal" data-build="c1" style="--c:#2dd4bf"><div class="qhead"><span class="num">01</span><span class="ico">&#x1F4C8;</span><h2>The overall trend</h2></div>
+ <p class="q">Has global happiness risen or fallen since 2020, and is that change real or just caused by which countries were surveyed?</p>
+ <div class="chart"><canvas id="c1"></canvas></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>The average score moved from 5.54 in 2020 to 5.65 in 2025.</p></div></section>
+
+<section id="q2" class="card reveal" data-build="c2" style="--c:#f472b6"><div class="qhead"><span class="num">02</span><span class="ico">&#x2696;</span><h2>The happiness gap</h2></div>
+ <p class="q">Is the gap between the happiest and least happy countries widening or narrowing?</p>
+ <div class="chart"><canvas id="c2"></canvas></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>The gap between the top 10 and bottom 10 averages was 4.03 in 2020 and 3.97 in 2025.</p></div></section>
+
+<section id="q3" class="card reveal" data-build="c3" style="--c:#fbbf24"><div class="qhead"><span class="num">03</span><span class="ico">&#x1F3C6;</span><h2>Top and bottom</h2></div>
+ <p class="q">Who sits at the top and bottom in 2025, and which countries stay there year after year?</p>
+ <div class="podium"><div class="pod p2"><div class="medal">&#x1F948;</div><div class="pname">Iceland</div><div class="pscore">7.54</div></div><div class="pod p1"><div class="medal">&#x1F947;</div><div class="pname">Finland</div><div class="pscore">7.76</div></div><div class="pod p3"><div class="medal">&#x1F949;</div><div class="pname">Denmark</div><div class="pscore">7.54</div></div></div><div class="chart" style="height:580px"><canvas id="c3"></canvas></div><div class="persist"><p><strong>&#x1F31E; In the top 10 every year:</strong> Denmark, Finland, Iceland, Luxembourg, Netherlands, Norway, Sweden</p><p><strong>&#x1F327; In the bottom 10 every year:</strong> Afghanistan, Botswana, Malawi, Zimbabwe</p></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>The happiest country in 2025 was Finland; the least happy was Afghanistan.</p></div></section>
+
+<section id="q4" class="card reveal" data-build="c4" style="--c:#60a5fa"><div class="qhead"><span class="num">04</span><span class="ico">&#x1F680;</span><h2>Winners and losers</h2></div>
+ <p class="q">Which countries gained or lost the most between 2020 and 2025, and did more countries improve than decline?</p>
+ <div class="chart"><canvas id="c4"></canvas></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>91 of 153 countries improved. The biggest gain was Vietnam.</p></div></section>
+
+<section id="q5" class="card reveal" data-build="c5" style="--c:#a78bfa"><div class="qhead"><span class="num">05</span><span class="ico">&#x1F504;</span><h2>Catching up?</h2></div>
+ <p class="q">Do countries that started out less happy catch up, or fall further behind? Hover over a dot to see the country.</p>
+ <div class="chart"><canvas id="c5"></canvas></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>The correlation between starting score and change was 0.02.</p></div></section>
+
+<section id="q6" class="card reveal" data-build="c6" style="--c:#fb923c"><div class="qhead"><span class="num">06</span><span class="ico">&#x1F3A2;</span><h2>The rollercoaster</h2></div>
+ <p class="q">Which countries have the most unstable happiness scores, and which are the most stable?</p>
+ <div class="chart"><canvas id="c6"></canvas></div><div class="answer"><span class="tag">&#x2728; Analysis</span><p>The most volatile country was Lebanon.</p></div></section>
+
+<section id="explore" class="card reveal" data-build="c7" style="--c:#2dd4bf"><div class="qhead"><span class="ico">&#x1F50E;</span><h2>Explore any country</h2></div>
+ <p class="q">Pick two countries and compare their journeys with the world average.</p>
+ <div class="controls"><select id="selA"></select><select id="selB"></select></div><div id="readout"></div>
+ <div class="chart"><canvas id="c7"></canvas></div></section>
+
+<section id="summary" class="card reveal" style="--c:#f472b6"><div class="qhead"><span class="ico">&#x1F4DD;</span><h2>Summary</h2></div><p>See the charts and answers above.</p><h3>Limitations</h3><p>This dataset has only scores, so it cannot explain why scores changed.</p></section>
+<section id="conclusions" class="card reveal" style="--c:#2dd4bf"><div class="qhead"><span class="ico">&#x1F3C1;</span><h2>Conclusions</h2></div><ul class="checks"><li>Add your own conclusions here.</li></ul></section>
+</main>
+<footer>Data: World Happiness Report (Gallup World Poll) &middot; Statistics computed in Google Sheets &middot; Analysis written with Google Gemini &middot; Charts by Chart.js</footer>
+<script>
+var D = {"first":2020,"last":2025,"nBal":147,"years":[2020,2021,2022,2023,2024,2025],"yearly":[{"year":2020,"n":160,"avg":5.54,"median":5.51,"sd":1.07,"top10":7.47,"bottom10":3.43,"gap":4.03,"bal":5.61},{"year":2021,"n":157,"avg":5.55,"median":5.57,"sd":1.08,"top10":7.47,"bottom10":3.34,"gap":4.13,"bal":5.6},{"year":2022,"n":148,"avg":5.54,"median":5.68,"sd":1.13,"top10":7.41,"bottom10":3.18,"gap":4.23,"bal":5.56},{"year":2023,"n":154,"avg":5.53,"median":5.8,"sd":1.16,"top10":7.34,"bottom10":3.13,"gap":4.21,"bal":5.58},{"year":2024,"n":158,"avg":5.58,"median":5.87,"sd":1.15,"top10":7.33,"bottom10":3.22,"gap":4.11,"bal":5.63},{"year":2025,"n":158,"avg":5.65,"median":5.94,"sd":1.13,"top10":7.33,"bottom10":3.36,"gap":3.97,"bal":5.7}],"top":[{"country":"Finland","score":7.76},{"country":"Iceland","score":7.54},{"country":"Denmark","score":7.54},{"country":"Costa Rica","score":7.44},{"country":"Sweden","score":7.26},{"country":"Norway","score":7.24},{"country":"Netherlands","score":7.22},{"country":"Israel","score":7.19},{"country":"Luxembourg","score":7.06},{"country":"Switzerland","score":7.02}],"bottom":[{"country":"Tanzania","score":3.9},{"country":"Egypt","score":3.86},{"country":"Democratic Republic of Congo","score":3.76},{"country":"Lebanon","score":3.72},{"country":"Yemen","score":3.53},{"country":"Botswana","score":3.46},{"country":"Zimbabwe","score":3.35},{"country":"Malawi","score":3.28},{"country":"Sierra Leone","score":3.25},{"country":"Afghanistan","score":1.45}],"improvers":[{"country":"Vietnam","start":5.411,"change":1.02},{"country":"Lesotho","start":3.512,"change":0.86},{"country":"Venezuela","start":4.892,"change":0.86},{"country":"Algeria","start":4.887,"change":0.83},{"country":"China","start":5.339,"change":0.73}],"decliners":[{"country":"Afghanistan","start":2.523,"change":-1.08},{"country":"Congo","start":5.342,"change":-0.89},{"country":"Lebanon","start":4.584,"change":-0.86},{"country":"Gambia","start":5.051,"change":-0.75},{"country":"Bangladesh","start":5.025,"change":-0.71}],"catchup":{"r":0.02,"points":[{"x":5.41,"y":1.02,"label":"Vietnam"},{"x":3.51,"y":0.86,"label":"Lesotho"},{"x":4.89,"y":0.86,"label":"Venezuela"},{"x":4.89,"y":0.83,"label":"Algeria"},{"x":5.34,"y":0.73,"label":"China"},{"x":3.82,"y":0.72,"label":"India"},{"x":6.32,"y":0.66,"label":"Mexico"},{"x":4.89,"y":0.63,"label":"Georgia"},{"x":5.38,"y":0.62,"label":"Malaysia"},{"x":5.1,"y":0.62,"label":"North Macedonia"},{"x":6.08,"y":0.61,"label":"Serbia"},{"x":6.17,"y":0.6,"label":"Poland"},{"x":5.81,"y":0.57,"label":"Bosnia and Herzegovina"},{"x":5.58,"y":0.56,"label":"Montenegro"},{"x":5.55,"y":0.55,"label":"Dominican Republic"},{"x":5.65,"y":0.55,"label":"Paraguay"},{"x":5.12,"y":0.54,"label":"Albania"},{"x":6.37,"y":0.54,"label":"Kosovo"},{"x":4.79,"y":0.54,"label":"Mozambique"},{"x":5.46,"y":0.54,"label":"Upper-middle-income countries"},{"x":6.06,"y":0.52,"label":"El Salvador"},{"x":5.93,"y":0.5,"label":"Argentina"},{"x":6.14,"y":0.49,"label":"Romania"},{"x":6.15,"y":0.48,"label":"Kazakhstan"},{"x":5.03,"y":0.48,"label":"Laos"},{"x":4.84,"y":0.47,"label":"Asia"},{"x":6.26,"y":0.45,"label":"Lithuania"},{"x":5.27,"y":0.44,"label":"Bulgaria"},{"x":6.11,"y":0.44,"label":"Kuwait"},{"x":4.72,"y":0.43,"label":"Iran"},{"x":6.46,"y":0.41,"label":"Slovenia"},{"x":5.76,"y":0.38,"label":"Ecuador"},{"x":7.07,"y":0.37,"label":"Costa Rica"},{"x":6.18,"y":0.37,"label":"Panama"},{"x":4.85,"y":0.36,"label":"Iraq"},{"x":5.48,"y":0.36,"label":"Russia"},{"x":4.95,"y":0.35,"label":"Turkey"},{"x":6.03,"y":0.33,"label":"Latvia"},{"x":5.97,"y":0.33,"label":"Nicaragua"},{"x":5.88,"y":0.33,"label":"Philippines"},{"x":5.41,"y":0.32,"label":"Libya"},{"x":6.49,"y":0.32,"label":"Saudi Arabia"},{"x":4.85,"y":0.31,"label":"Gabon"},{"x":5.74,"y":0.31,"label":"Kyrgyzstan"},{"x":4.29,"y":0.31,"label":"Lower-middle-income countries"},{"x":6.06,"y":0.31,"label":"South America"},{"x":5.99,"y":0.31,"label":"Thailand"},{"x":5.28,"y":0.3,"label":"Armenia"},{"x":6.33,"y":0.3,"label":"Brazil"},{"x":3.62,"y":0.28,"label":"Tanzania"},{"x":5.35,"y":0.27,"label":"Indonesia"},{"x":5.16,"y":0.27,"label":"World"},{"x":5.68,"y":0.26,"label":"Mongolia"},{"x":6.56,"y":0.26,"label":"United Arab Emirates"},{"x":4.23,"y":0.25,"label":"Mauritania"},{"x":6.19,"y":0.22,"label":"Estonia"},{"x":4.57,"y":0.21,"label":"Namibia"},{"x":6.38,"y":0.21,"label":"Singapore"},{"x":5.85,"y":0.2,"label":"South Korea"},{"x":4.6,"y":0.2,"label":"Tunisia"},{"x":6.43,"y":0.2,"label":"Uruguay"},{"x":3.15,"y":0.2,"label":"Zimbabwe"},{"x":5.94,"y":0.19,"label":"Japan"},{"x":5.92,"y":0.18,"label":"Honduras"},{"x":4.52,"y":0.18,"label":"Palestine"},{"x":4.11,"y":0.17,"label":"Togo"},{"x":6.17,"y":0.13,"label":"Chile"},{"x":5.88,"y":0.13,"label":"Croatia"},{"x":6.67,"y":0.13,"label":"North America"},{"x":5.84,"y":0.13,"label":"Peru"},{"x":6.58,"y":0.13,"label":"Taiwan"},{"x":5.47,"y":0.13,"label":"Tajikistan"},{"x":5.72,"y":0.12,"label":"Bolivia"},{"x":6.44,"y":0.1,"label":"Guatemala"},{"x":5.93,"y":0.1,"label":"Portugal"},{"x":6.18,"y":0.1,"label":"Uzbekistan"},{"x":6.83,"y":0.09,"label":"Belgium"},{"x":5.48,"y":0.09,"label":"Hong Kong"},{"x":6.48,"y":0.09,"label":"Italy"},{"x":4.39,"y":0.08,"label":"Jordan"},{"x":5.77,"y":0.08,"label":"Moldova"},{"x":6.34,"y":0.07,"label":"Europe"},{"x":4.61,"y":0.07,"label":"Kenya"},{"x":4.96,"y":0.05,"label":"South Africa"},{"x":6.49,"y":0.05,"label":"Spain"},{"x":4.36,"y":0.03,"label":"Chad"},{"x":6.01,"y":0.03,"label":"Colombia"},{"x":7.16,"y":0.03,"label":"Israel"},{"x":4.76,"y":0.03,"label":"Nigeria"},{"x":4.07,"y":0.03,"label":"Zambia"},{"x":6.54,"y":0.02,"label":"High-income countries"},{"x":3.47,"y":0,"label":"Botswana"},{"x":6.31,"y":0,"label":"Jamaica"},{"x":7.55,"y":-0.01,"label":"Iceland"},{"x":5.72,"y":-0.03,"label":"Greece"},{"x":4.21,"y":-0.03,"label":"Madagascar"},{"x":5.99,"y":-0.05,"label":"Hungary"},{"x":5.14,"y":-0.06,"label":"Cameroon"},{"x":4.93,"y":-0.07,"label":"Pakistan"},{"x":7.62,"y":-0.08,"label":"Denmark"},{"x":7.84,"y":-0.08,"label":"Finland"},{"x":6.33,"y":-0.08,"label":"Slovakia"},{"x":6.22,"y":-0.1,"label":"Cyprus"},{"x":6.69,"y":-0.1,"label":"France"},{"x":4.55,"y":-0.11,"label":"Africa"},{"x":6.05,"y":-0.11,"label":"Mauritius"},{"x":7.36,"y":-0.11,"label":"Sweden"},{"x":5.27,"y":-0.12,"label":"Nepal"},{"x":4.72,"y":-0.13,"label":"Mali"},{"x":5.07,"y":-0.13,"label":"Niger"},{"x":6.95,"y":-0.13,"label":"United States"},{"x":3.66,"y":-0.13,"label":"Yemen"},{"x":6.97,"y":-0.14,"label":"Czechia"},{"x":4.43,"y":-0.14,"label":"Myanmar"},{"x":7.39,"y":-0.15,"label":"Norway"},{"x":4.64,"y":-0.15,"label":"Uganda"},{"x":5.31,"y":-0.16,"label":"Cote d'Ivoire"},{"x":7.09,"y":-0.16,"label":"Ireland"},{"x":6.6,"y":-0.17,"label":"Malta"},{"x":5.17,"y":-0.18,"label":"Azerbaijan"},{"x":4.16,"y":-0.22,"label":"Low-income countries"},{"x":4.88,"y":-0.22,"label":"Ukraine"},{"x":7.46,"y":-0.24,"label":"Netherlands"},{"x":7.32,"y":-0.26,"label":"Luxembourg"},{"x":7.18,"y":-0.27,"label":"Australia"},{"x":7.16,"y":-0.27,"label":"Germany"},{"x":4.92,"y":-0.27,"label":"Morocco"},{"x":7.2,"y":-0.27,"label":"Oceania"},{"x":7.28,"y":-0.28,"label":"New Zealand"},{"x":4.28,"y":-0.29,"label":"Ethiopia"},{"x":4.33,"y":-0.31,"label":"Sri Lanka"},{"x":3.6,"y":-0.32,"label":"Malawi"},{"x":4.63,"y":-0.34,"label":"Liberia"},{"x":5.13,"y":-0.34,"label":"Senegal"},{"x":7.1,"y":-0.36,"label":"Canada"},{"x":4.29,"y":-0.36,"label":"Comoros"},{"x":4.83,"y":-0.37,"label":"Cambodia"},{"x":4.98,"y":-0.37,"label":"Guinea"},{"x":7.06,"y":-0.37,"label":"United Kingdom"},{"x":4.83,"y":-0.38,"label":"Burkina Faso"},{"x":6.65,"y":-0.39,"label":"Bahrain"},{"x":4.31,"y":-0.4,"label":"Eswatini"},{"x":7.27,"y":-0.42,"label":"Austria"},{"x":4.28,"y":-0.42,"label":"Egypt"},{"x":5.09,"y":-0.53,"label":"Ghana"},{"x":7.57,"y":-0.55,"label":"Switzerland"},{"x":3.85,"y":-0.6,"label":"Sierra Leone"},{"x":5.05,"y":-0.65,"label":"Benin"},{"x":5.03,"y":-0.71,"label":"Bangladesh"},{"x":5.05,"y":-0.75,"label":"Gambia"},{"x":4.58,"y":-0.86,"label":"Lebanon"},{"x":5.34,"y":-0.89,"label":"Congo"},{"x":2.52,"y":-1.08,"label":"Afghanistan"}],"line":[{"x":2.52,"y":0.06},{"x":7.84,"y":0.1}]},"volatile":[{"country":"Lebanon","sd":0.79},{"country":"Bangladesh","sd":0.56},{"country":"Afghanistan","sd":0.48},{"country":"Vietnam","sd":0.43},{"country":"Comoros","sd":0.42},{"country":"Gambia","sd":0.39},{"country":"Venezuela","sd":0.39},{"country":"Liberia","sd":0.38},{"country":"Mexico","sd":0.36},{"country":"Costa Rica","sd":0.35}],"series":{"Afghanistan":[2.52,2.4,1.86,1.72,1.36,1.45],"Africa":[4.55,4.52,4.43,4.39,4.39,4.44],"Albania":[5.12,5.2,5.28,5.3,5.41,5.66],"Algeria":[4.89,5.12,5.33,5.36,5.57,5.71],"Argentina":[5.93,5.97,6.02,6.19,6.4,6.43],"Armenia":[5.28,5.4,5.34,5.46,5.49,5.58],"Asia":[4.84,4.89,5,5.08,5.19,5.32],"Australia":[7.18,7.16,7.1,7.06,6.97,6.92],"Austria":[7.27,7.16,7.1,6.91,6.81,6.85],"Azerbaijan":[5.17,5.17,null,4.89,4.88,4.99],"Bahrain":[6.65,6.65,6.17,5.96,6.03,6.25],"Bangladesh":[5.03,5.16,4.28,3.89,3.85,4.32],"Belarus":[5.53,5.82,null,null,null,null],"Belgium":[6.83,6.81,6.86,6.89,6.91,6.93],"Belize":[null,null,null,null,6.71,6.71],"Benin":[5.05,4.62,4.37,4.38,4.36,4.39],"Bolivia":[5.72,5.6,5.68,5.78,5.87,5.84],"Bosnia and Herzegovina":[5.81,5.77,5.63,5.88,6.14,6.38],"Botswana":[3.47,3.47,3.44,3.38,3.44,3.46],"Brazil":[6.33,6.29,6.13,6.27,6.49,6.63],"Bulgaria":[5.27,5.37,5.47,5.46,5.55,5.7],"Burkina Faso":[4.83,4.67,4.64,4.55,4.38,4.46],"Burundi":[3.78,null,null,null,null,null],"Cambodia":[4.83,4.64,4.39,4.34,4.34,4.46],"Cameroon":[5.14,5.05,4.97,4.87,4.89,5.08],"Canada":[7.1,7.03,6.96,6.9,6.8,6.74],"Chad":[4.36,4.25,4.4,4.47,4.38,4.39],"Chile":[6.17,6.17,6.33,6.36,6.36,6.3],"China":[5.34,5.59,5.82,5.97,5.92,6.07],"Colombia":[6.01,5.78,5.63,5.7,6,6.04],"Comoros":[4.29,4.61,3.55,3.57,3.75,3.93],"Congo":[5.34,5.08,5.27,5.22,5.03,4.46],"Costa Rica":[7.07,6.58,6.61,6.96,7.27,7.44],"Cote d'Ivoire":[5.31,5.24,5.05,5.08,5.1,5.15],"Croatia":[5.88,6.13,6.13,5.94,5.87,6.01],"Cyprus":[6.22,6.22,6.13,6.07,5.94,6.13],"Czechia":[6.97,6.92,6.85,6.82,6.78,6.82],"Democratic Republic of Congo":[null,null,3.21,3.3,3.47,3.76],"Denmark":[7.62,7.64,7.59,7.58,7.52,7.54],"Dominican Republic":[5.55,5.74,5.57,5.82,5.85,6.09],"Ecuador":[5.76,5.53,5.56,5.73,5.97,6.14],"Egypt":[4.28,4.29,4.17,3.98,3.82,3.86],"El Salvador":[6.06,6.12,6.12,6.47,6.49,6.58],"Estonia":[6.19,6.34,6.46,6.45,6.42,6.41],"Eswatini":[4.31,4.4,null,3.5,3.77,3.91],"Ethiopia":[4.28,4.24,4.09,3.86,3.9,3.99],"Europe":[6.34,6.34,6.36,6.34,6.39,6.4],"Finland":[7.84,7.82,7.8,7.74,7.74,7.76],"France":[6.69,6.69,6.66,6.61,6.59,6.59],"Gabon":[4.85,4.96,5.04,5.11,5.12,5.17],"Gambia":[5.05,5.16,4.28,4.49,4.42,4.31],"Georgia":[4.89,4.97,5.11,5.19,5.4,5.52],"Germany":[7.16,7.03,6.89,6.72,6.75,6.88],"Ghana":[5.09,4.87,4.61,4.29,4.34,4.55],"Greece":[5.72,5.95,5.93,5.93,5.78,5.7],"Guatemala":[6.44,6.26,6.15,6.29,6.36,6.53],"Guinea":[4.98,4.89,5.07,5.02,4.93,4.61],"Haiti":[3.62,null,null,null,null,null],"High-income countries":[6.54,6.55,6.54,6.5,6.53,6.56],"Honduras":[5.92,6.02,6.02,5.97,5.96,6.1],"Hong Kong":[5.48,5.43,5.31,5.32,5.49,5.57],"Hungary":[5.99,6.09,6.04,6.02,5.92,5.94],"Iceland":[7.55,7.56,7.53,7.53,7.52,7.54],"India":[3.82,3.78,4.04,4.05,4.39,4.54],"Indonesia":[5.35,5.24,5.28,5.57,5.62,5.62],"Iran":[4.72,4.89,4.88,4.92,5.09,5.15],"Iraq":[4.85,4.94,4.94,5.17,4.98,5.21],"Ireland":[7.09,7.04,6.91,6.84,6.89,6.93],"Israel":[7.16,7.36,7.47,7.34,7.23,7.19],"Italy":[6.48,6.47,6.41,6.32,6.42,6.57],"Jamaica":[6.31,5.85,5.7,5.84,5.87,6.31],"Japan":[5.94,6.04,6.13,6.06,6.15,6.13],"Jordan":[4.39,4.15,4.12,4.19,4.31,4.48],"Kazakhstan":[6.15,6.23,6.14,6.19,6.38,6.63],"Kenya":[4.61,4.54,4.49,4.47,4.51,4.67],"Kosovo":[6.37,6.46,6.37,6.56,6.66,6.91],"Kuwait":[6.11,6.11,null,6.95,6.63,6.54],"Kyrgyzstan":[5.74,5.83,5.83,5.71,5.86,6.05],"Laos":[5.03,5.14,5.11,5.14,5.3,5.52],"Latvia":[6.03,6.18,6.21,6.23,6.21,6.37],"Lebanon":[4.58,2.96,2.39,2.71,3.19,3.72],"Lesotho":[3.51,3.51,null,3.19,3.76,4.38],"Liberia":[4.63,5.12,4.04,4.27,4.28,4.28],"Libya":[5.41,5.33,null,5.87,5.82,5.73],"Lithuania":[6.26,6.45,6.76,6.82,6.83,6.7],"Low-income countries":[4.16,4.2,3.84,3.8,3.83,3.95],"Lower-middle-income countries":[4.29,4.21,4.32,4.3,4.48,4.6],"Luxembourg":[7.32,7.4,7.23,7.12,7.12,7.06],"Madagascar":[4.21,4.34,4.02,4.23,4.16,4.17],"Malawi":[3.6,3.75,3.5,3.42,3.26,3.28],"Malaysia":[5.38,5.71,6.01,5.98,5.96,6.01],"Maldives":[5.2,null,null,null,null,null],"Mali":[4.72,4.48,4.2,4.23,4.35,4.59],"Malta":[6.6,6.45,6.3,6.35,6.32,6.44],"Mauritania":[4.23,4.15,4.72,4.51,4.54,4.47],"Mauritius":[6.05,6.07,5.9,5.82,5.83,5.94],"Mexico":[6.32,6.13,6.33,6.68,6.98,6.97],"Moldova":[5.77,5.86,5.82,5.82,5.82,5.85],"Mongolia":[5.68,5.76,5.84,5.7,5.83,5.94],"Montenegro":[5.58,5.55,5.72,5.71,5.88,6.14],"Morocco":[4.92,5.06,4.9,4.8,4.62,4.65],"Mozambique":[4.79,5.05,4.95,5.22,5.19,5.34],"Myanmar":[4.43,4.39,4.37,4.35,4.32,4.29],"Namibia":[4.57,4.46,4.63,4.83,4.91,4.78],"Nepal":[5.27,5.38,5.36,5.16,5.31,5.15],"Netherlands":[7.46,7.42,7.4,7.32,7.31,7.22],"New Zealand":[7.28,7.2,7.12,7.03,6.95,7],"Nicaragua":[5.97,6.17,6.26,6.28,6.33,6.3],"Niger":[5.07,5,4.5,4.56,4.72,4.94],"Nigeria":[4.76,4.55,4.98,4.88,4.89,4.79],"North America":[6.67,6.69,6.68,6.67,6.73,6.8],"North Macedonia":[5.1,5.2,5.25,5.37,5.5,5.72],"Northern Cyprus":[5.54,5.47,null,null,null,null],"Norway":[7.39,7.37,7.32,7.3,7.26,7.24],"Oceania":[7.2,7.17,7.1,7.05,6.97,6.93],"Oman":[null,null,null,null,6.2,6.2],"Pakistan":[4.93,4.52,4.56,4.66,4.77,4.87],"Palestine":[4.52,4.48,4.91,4.88,4.78,4.69],"Panama":[6.18,6.31,6.27,6.36,6.41,6.55],"Paraguay":[5.65,5.58,5.74,5.98,6.17,6.2],"Peru":[5.84,5.56,5.53,5.84,5.95,5.97],"Philippines":[5.88,5.9,5.52,6.05,6.11,6.21],"Poland":[6.17,6.12,6.26,6.44,6.67,6.77],"Portugal":[5.93,6.02,5.97,6.03,6.01,6.03],"Romania":[6.14,6.48,6.59,6.49,6.56,6.63],"Russia":[5.48,5.46,5.66,5.79,5.95,5.83],"Rwanda":[3.42,3.27,null,null,null,null],"Saudi Arabia":[6.49,6.52,6.46,6.59,6.6,6.82],"Senegal":[5.13,5.05,4.86,4.97,4.86,4.79],"Serbia":[6.08,6.18,6.14,6.41,6.61,6.69],"Sierra Leone":[3.85,3.57,3.14,3.25,3,3.25],"Singapore":[6.38,6.48,6.59,6.52,6.57,6.59],"Slovakia":[6.33,6.39,6.47,6.26,6.22,6.26],"Slovenia":[6.46,6.63,6.65,6.74,6.79,6.87],"Somalia":[null,null,null,null,4.35,4.51],"South Africa":[4.96,5.19,5.28,5.42,5.21,5.01],"South America":[6.06,5.98,5.92,6.08,6.28,6.36],"South Korea":[5.85,5.94,5.95,6.06,6.04,6.04],"Spain":[6.49,6.48,6.44,6.42,6.47,6.54],"Sri Lanka":[4.33,4.36,4.44,3.9,3.89,4.01],"Sweden":[7.36,7.38,7.4,7.34,7.35,7.26],"Switzerland":[7.57,7.51,7.24,7.06,6.94,7.02],"Taiwan":[6.58,6.51,6.54,6.5,6.67,6.71],"Tajikistan":[5.47,5.38,5.33,5.28,5.41,5.59],"Tanzania":[3.62,3.7,3.69,3.78,3.8,3.9],"Thailand":[5.99,5.89,5.84,5.98,6.22,6.3],"Togo":[4.11,4.11,4.14,4.21,4.32,4.28],"Trinidad and Tobago":[null,null,null,null,5.91,5.91],"Tunisia":[4.6,4.52,4.5,4.42,4.55,4.8],"Turkey":[4.95,4.74,4.61,4.97,5.26,5.3],"Turkmenistan":[5.07,5.47,null,null,null,null],"Uganda":[4.64,4.6,4.43,4.37,4.46,4.49],"Ukraine":[4.88,5.08,5.07,4.87,4.68,4.66],"United Arab Emirates":[6.56,6.58,6.57,6.73,6.76,6.82],"United Kingdom":[7.06,6.94,6.8,6.75,6.73,6.69],"United States":[6.95,6.98,6.89,6.73,6.72,6.82],"Upper-middle-income countries":[5.46,5.57,5.67,5.85,5.9,6],"Uruguay":[6.43,6.47,6.49,6.61,6.66,6.64],"Uzbekistan":[6.18,6.06,6.01,6.2,6.19,6.28],"Venezuela":[4.89,4.93,5.21,5.61,5.68,5.76],"Vietnam":[5.41,5.49,5.76,6.04,6.35,6.43],"World":[5.16,5.18,5.22,5.26,5.34,5.44],"Yemen":[3.66,4.2,null,3.56,3.56,3.53],"Zambia":[4.07,3.76,3.98,3.5,3.91,4.11],"Zimbabwe":[3.15,3,3.2,3.34,3.4,3.35]}};
+Chart.defaults.color = '#aab3d1';
+Chart.defaults.font.family = "Poppins, 'Segoe UI', system-ui, sans-serif";
+Chart.defaults.borderColor = 'rgba(255,255,255,.08)';
+Chart.defaults.animation.duration = 1400;
+Chart.defaults.animation.easing = 'easeOutQuart';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.tooltip.backgroundColor = '#141a33';
+Chart.defaults.plugins.tooltip.padding = 10;
+var C = { teal: '#2dd4bf', pink: '#f472b6', amber: '#fbbf24', violet: '#a78bfa', blue: '#60a5fa', red: '#fb7185', orange: '#fb923c' };
+function grad(color) { return function (c) { var a = c.chart.chartArea; if (!a) return color + '33';
+  var g = c.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom); g.addColorStop(0, color + '66'); g.addColorStop(1, color + '00'); return g; }; }
+function opts(xt, yt, extra) { return Object.assign({ responsive: true, maintainAspectRatio: false,
+  scales: { x: { title: { display: !!xt, text: xt } }, y: { title: { display: !!yt, text: yt } } } }, extra || {}); }
+function line(label, data, color, extra) { return Object.assign({ label: label, data: data, borderColor: color, backgroundColor: grad(color), fill: true,
+  tension: 0.35, borderWidth: 3, pointRadius: 5, pointHoverRadius: 8, pointBackgroundColor: color }, extra || {}); }
+var yrs = D.yearly.map(function (d) { return d.year; });
+var chart7 = null;
+var B = {
+  c1: function () {
+    var ds = [line('All countries surveyed that year', D.yearly.map(function (d) { return d.avg; }), C.teal)];
+    if (D.nBal >= 5) ds.push(line('Same ' + D.nBal + ' countries every year', D.yearly.map(function (d) { return d.bal; }), C.amber, { borderDash: [6, 5], fill: false }));
+    new Chart(document.getElementById('c1'), { type: 'line', data: { labels: yrs, datasets: ds }, options: opts('Year', 'Average score (0-10)') });
+  },
+  c2: function () {
+    new Chart(document.getElementById('c2'), { type: 'line', data: { labels: yrs, datasets: [
+      line('Average of top 10 countries', D.yearly.map(function (d) { return d.top10; }), C.teal),
+      line('Average of bottom 10 countries', D.yearly.map(function (d) { return d.bottom10; }), C.pink)] }, options: opts('Year', 'Average score') });
+  },
+  c3: function () {
+    var both = D.top.concat(D.bottom);
+    new Chart(document.getElementById('c3'), { type: 'bar', data: { labels: both.map(function (d) { return d.country; }),
+      datasets: [{ label: 'Score in ' + D.last, data: both.map(function (d) { return d.score; }), borderRadius: 8,
+      backgroundColor: both.map(function (d, i) { return i < D.top.length ? C.teal : C.pink; }) }] },
+      options: opts('Happiness score', '', { indexAxis: 'y', plugins: { legend: { display: false } } }) });
+  },
+  c4: function () {
+    var mv = D.improvers.concat(D.decliners);
+    new Chart(document.getElementById('c4'), { type: 'bar', data: { labels: mv.map(function (d) { return d.country; }),
+      datasets: [{ label: 'Change in score, ' + D.first + ' to ' + D.last, data: mv.map(function (d) { return d.change; }), borderRadius: 8,
+      backgroundColor: mv.map(function (d) { return d.change >= 0 ? C.teal : C.red; }) }] }, options: opts('', 'Change in score') });
+  },
+  c5: function () {
+    if (!D.catchup.points.length) return;
+    new Chart(document.getElementById('c5'), { type: 'scatter', data: { datasets: [
+      { label: 'Countries (r = ' + D.catchup.r + ')', data: D.catchup.points, backgroundColor: C.violet + 'cc', pointRadius: 5, pointHoverRadius: 9 },
+      { label: 'Trend line', type: 'line', data: D.catchup.line, borderColor: '#fff', pointRadius: 0, borderWidth: 2, borderDash: [6, 4] }] },
+      options: opts('Score in ' + D.first, 'Change by ' + D.last, { plugins: { tooltip: { callbacks: {
+        label: function (c) { return (c.raw.label || 'Trend') + ': start ' + c.raw.x + ', change ' + c.raw.y; } } } } }) });
+  },
+  c6: function () {
+    new Chart(document.getElementById('c6'), { type: 'bar', data: { labels: D.volatile.map(function (d) { return d.country; }),
+      datasets: [{ label: 'Std. deviation of score across years', data: D.volatile.map(function (d) { return d.sd; }), borderRadius: 8, backgroundColor: C.orange }] },
+      options: opts('Standard deviation (higher = more unstable)', '', { indexAxis: 'y', plugins: { legend: { display: false } } }) });
+  },
+  c7: function () {
+    var A = document.getElementById('selA'), Bsel = document.getElementById('selB');
+    Object.keys(D.series).forEach(function (n) { A.add(new Option(n, n)); Bsel.add(new Option(n, n)); });
+    Bsel.insertBefore(new Option('(none)', ''), Bsel.firstChild);
+    A.value = D.top[0].country; Bsel.value = D.bottom[D.bottom.length - 1].country;
+    function note(name, arr) {
+      var v = arr.filter(function (x) { return x !== null; });
+      if (v.length < 2) return name + ': not enough data. ';
+      var d = Math.round((v[v.length - 1] - v[0]) * 100) / 100;
+      return name + ': ' + v[0] + ' to ' + v[v.length - 1] + ' (' + (d >= 0 ? '+' : '') + d + '). ';
+    }
+    function draw() {
+      if (chart7) chart7.destroy();
+      var ds = [line('World average', D.yearly.map(function (d) { return d.avg; }), '#e8ecf8', { fill: false, borderDash: [6, 5] }),
+        line(A.value, D.series[A.value], C.teal)];
+      var txt = note(A.value, D.series[A.value]);
+      if (Bsel.value) { ds.push(line(Bsel.value, D.series[Bsel.value], C.pink)); txt += note(Bsel.value, D.series[Bsel.value]); }
+      document.getElementById('readout').textContent = txt;
+      chart7 = new Chart(document.getElementById('c7'), { type: 'line', data: { labels: D.years, datasets: ds }, options: opts('Year', 'Score', { spanGaps: true }) });
+    }
+    A.onchange = draw; Bsel.onchange = draw; draw();
+  }
+};
+function count(el) {
+  var to = parseFloat(el.getAttribute('data-to')), dec = parseInt(el.getAttribute('data-dec'), 10), pre = el.getAttribute('data-pre') || '', t0 = null;
+  function step(t) { if (t0 === null) t0 = t; var p = Math.min((t - t0) / 1400, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = pre + (to * e).toFixed(dec); if (p < 1) requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
+var io = new IntersectionObserver(function (es) { es.forEach(function (e) {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  var id = e.target.getAttribute('data-build'); if (id && B[id]) B[id]();
+  e.target.querySelectorAll('.stat b').forEach(count);
+}); }, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+window.addEventListener('scroll', function () {
+  var h = document.documentElement; document.getElementById('bar').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+});
+</script></body></html>
